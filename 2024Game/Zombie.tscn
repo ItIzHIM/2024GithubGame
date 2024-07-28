@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://68xlo1fwldng"]
+
+[sub_resource type="GDScript" id="GDScript_vplbl"]
+script/source = "extends CharacterBody3D
+
+var player = null
+
+const SPEED = 6
+
+@export var player_path : NodePath
+
+@onready var nav_agent = $NavigationAgent3D
+
+func _ready():
+	player = get_node(player_path)
+
+func _process(delta):
+	velocity = Vector3.ZERO
+	nav_agent.set_target_position(player.global_transform.origin)
+	var next_nav_point = nav_agent.get_next_path_position()
+	velocity = (next_nav_point - global_transform.origin).normalized() * SPEED
+	move_and_slide()
+	
+	
+"
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_uctgb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gcaud"]
+
+[node name="Zombie" type="CharacterBody3D"]
+collision_layer = 5
+collision_mask = 5
+script = SubResource("GDScript_vplbl")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_uctgb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_gcaud")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_height_offset = 0.15
