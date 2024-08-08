@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://c04nojflmmndk"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_6mfcr"]
+
+[node name="Gun" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.239129, 0.233174, 0, -0.0573392, 0.972435, 0, 0, 0, 0.170554, -0.194033, -0.0157211, 0)
+mesh = SubResource("BoxMesh_6mfcr")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1.0749e-08, 1, 0, -0.245908, -4.37114e-08, 0, 0, 0, 0.170554, 0.173961, 0.374902, 0)
+mesh = SubResource("BoxMesh_6mfcr")
+
+[node name="RayCast3D" type="RayCast3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1.20052, 0, 1, -5.24765e-08, 0, 0, 0, 1, 0.69796, 0.342965, 0.000773728)

@@ -1,129 +1,328 @@
 extends CharacterBody3D
 
-@export var Bullet_To_Spawn : PackedScene
-@export var Bullet_Spawn_Point: Node3D
-@export var Bullet_Speed: float = 20
+enum WalkState{
+	NORMAL,
+	SPRINT,
+	CROUCH,
+	PRONE,
+	SLIDE
+}
 
-@onready var Player_Position = global_transform.origin
-@onready var Rope_Length = 0
-@onready var Max_Rope_Length = 0
-@onready var SPEED = 15
-@onready var ON_WALL = false
+@export var Grapple_Force = 40
+var grapple_hook_position : Vector3 = Vector3.ZERO
 
-const MAX_SPEED = 30
-const SIDE_SPEED = 15
-const ACCELERATION = 5
-const FRICTION = 0.9
-const JUMP_VELOCITY = 13
-const DOUBLE_JUMP_VELOCITY = 8
-const WALL_JUMP_VELOCITY = 8
+var current_walk_state : WalkState = WalkState.NORMAL
 
-@onready var GRAPPLE_ACCELARATION = 1
-@onready var MAX_POSITION = 0
-@onready var JUMP_COUNTER = 2
-@onready var WALL_JUMP_COUNTER = 1
-@onready var wall_sliding = false
-@onready var Camera_Cast = $Neck/Camera3D/camera_cast
-@onready var grapple_line = $Neck/Camera3D/GrappleLine
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-@onready var neck := $Neck
-@onready var camera := $Neck/Camera3D
-@onready var camera_cast = $Neck/Camera3D/camera_cast
-@onready var GrappleLine = $Neck/Camera3D/GrappleLine
+var player_position = 0
 
-# Variables for grappling hook
-var grappling = false
-var target_point = Vector3()
 
-func _unhandled_input(event: InputEvent):
-	if event is InputEventMouseButton:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	elif event.is_action_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		if event is InputEventMouseMotion:
-			neck.rotate_y(-event.relative.x * 0.01)
-			camera.rotate_x(-event.relative.y * 0.01)
-			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-80), deg_to_rad(90))
+#Grappling stuff
+@onready var camera_cast = $CameraPivot/Camera3D/CameraCast
+var grapple_raycast_hit = 0
+var is_grappling = false
+
+#movement attribute values
+const TARGET_LERP = .8
+ 
+const SPRINT_SPEED = 18.0
+const SPRINT_LERP_ACC = 1
+const SPRINT_LERP_DEC = 8
+ 
+const WALK_SPEED = 6.0
+const WALK_LERP_ACC = 3.5
+const WALK_LERP_DEC = 10
+ 
+const CROUCH_SPEED = 3.0
+const CROUCH_LERP_ACC = 8
+const CROUCH_LERP_DEC = 14
+ 
+const PRONE_SPEED = 1.5
+const PRONE_LERP_ACC = 12
+const PRONE_LERP_DEC = 22
+ 
+const SLIDE_SPEED = 30
+const SLIDE_TIME_MAX = .7
+const SLIDE_DAMPEN_RATE = .05
+const SLIDE_FLAT_DAMPEN_RATE = .001
+const SLOPE_SLIDE_THRESHOLD = .1
+var current_slide_time = 0
+var current_slide_vector : Vector3 = Vector3.ZERO
+ 
+var SPRINT_CD_MAX = .2
+var current_sprint_cd = 0
+ 
+const FALL_SPEED_MAX = 30
+const JUMP_VELOCITY = 6
+const JUMP_HANG_TIME_THRESHOLD = .3
+const JUMP_HANG_TIME_SPEED_MULT = 1.05
+const JUMP_HANG_TIME_ACC_MULT = 3
+ 
+const COYOTE_TIME_MAX = .1
+var current_coyote_time = 0
+var current_jump_cd = 0
+const JUMP_CD_MAX = .25
+
+
+# Get the gravity from the project settings to be synced with RigidBody nodes.
+var gravity_default = ProjectSettings.get_setting("physics/3d/default_gravity")
+var gravity_falling = 3.3 * gravity_default
+var gravity_hang_time = .5 * gravity_default
+var current_gravity = gravity_default
+
+@onready var collider = $Collider
+
+var input_dir = Vector2.ZERO
+var direction = Vector3.ZERO
+
+var current_max_speed : float = 0 
+var current_lerp_acc : float = 0
+var current_lerp_dec : float = 0
+var current_camera_height : float = 0
+
+var floor_angle
+
+const COLLIDER_HEIGHT_NORMAL = 2
+const COLLIDER_HEIGHT_CROUCH = 1.1
+const COLLIDER_HEIGHT_PRONE = .5
+
+const CAMERA_HEIGHT_NORMAL = 1.8
+const CAMERA_HEIGHT_CROUCH = .9
+const CAMERA_HEIGHT_PRONE = .3
+ 
+@export var camera_sensitivity = .25
+const CAMERA_LERP = 10
+const CAMERA_FOV_NORMAL = 70.0
+const CAMERA_FOV_MAX_SPEED = 100.0
+
+
+@onready var camera_pivot = $CameraPivot
+@onready var camera_3d = $CameraPivot/Camera3D
+@onready var height_raycast = $HeightRaycast
+
+func _ready():
+	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	_UpdateCollider()
+
+func _input(event):
+	if event is InputEventMouseMotion:
+		rotate_y(deg_to_rad(camera_sensitivity * -event.relative.x))
+		camera_pivot.rotate_x(deg_to_rad(camera_sensitivity * -event.relative.y))
+		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _physics_process(delta):
-	var space_state = get_world_3d().direct_space_state
-
-	# Add the gravity if not grappling
-	if not is_on_floor() and !is_on_wall():
-		velocity.y -= gravity * delta
-
-
-	# Handle jump and double jump
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor() and JUMP_COUNTER == 2:
-		velocity.y = JUMP_VELOCITY
-		JUMP_COUNTER = 1
-	if JUMP_COUNTER == 1 and !is_on_floor() and Input.is_action_just_pressed("ui_accept"):
-		velocity.y = DOUBLE_JUMP_VELOCITY
-		JUMP_COUNTER = 2
-	if is_on_floor() and !Input.is_action_just_pressed("ui_accept"):
-		JUMP_COUNTER = 2
-
-	# Get the input direction and handle the movement/deceleration.
-	var input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-	var direction = (neck.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	if direction:
-		velocity.x = direction.x * SIDE_SPEED * FRICTION
-		velocity.z = direction.z * SPEED * FRICTION
-	else:
-		velocity.x = move_toward(velocity.x, 0, SIDE_SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
-	if direction and !is_on_floor():
-		velocity.x = direction.x * SIDE_SPEED
-		velocity.z = direction.z * SPEED
-
-	# RayCast and grappling hook stuff
-	if Camera_Cast.is_colliding() and Input.is_action_pressed("grapple_action"):
-		if !grappling:
-			grappling = true
-	if Camera_Cast.is_colliding() and Input.is_action_just_pressed("grapple_action"):
-		target_point = Camera_Cast.get_collision_point()
-		Rope_Length = global_transform.origin.distance_to(target_point)
-
-	 # Move towards the target point if grappling
-	if grappling:
-		var below_target = (target_point.y - Rope_Length)
-		#glabal_transform.origin.x = 
-		GrappleLine.visible = true
-		var to_target = (target_point - global_transform.origin).normalized()
-		if global_transform.origin.distance_to(target_point) == Rope_Length or (global_transform.origin.distance_to(target_point) > Rope_Length - 0.5 and global_transform.origin.distance_to(target_point) < Rope_Length + 0.5):
-			MAX_POSITION = global_transform.origin
-		if global_transform.origin.distance_to(target_point) > Rope_Length:
-			global_transform.origin = MAX_POSITION
-			velocity.y = 0
-		else: 
-			velocity.y -= gravity * delta
-		# Adjust the threshold as needed
-		
-		var horizontal_move = to_target * 10  * delta
-		global_transform.origin.y += horizontal_move.y * 3
-		global_transform.origin.z += horizontal_move.z
-		global_transform.origin.x += horizontal_move.x
-		gravity = ProjectSettings.get_setting("physics/3d/default_gravity") / 2
-		print(horizontal_move.x)
-			# Apply gravity
-			#if global_transform.origin.y < target_point.y - 3:
-			#else:
-			#	velocity.y -= gravity * delta
-		GrappleLine.look_at(target_point, Vector3(0, 0, 1))
-	else:
-		GrappleLine.visible = false
-		gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-
-	if Input.is_action_just_pressed("LMB"):
-		pass  # shoot(Get_Camera_Collision())
-
-	# Reset grappling if the action is released
-	if grappling and !Input.is_action_pressed("grapple_action"):
-		grappling = false
-
-	move_and_slide()
+	if Input.is_action_pressed("escape"):
+		get_tree().quit()
+	player_position = global_transform.origin
+	grapple_raycast_hit = camera_cast.get_collision_point()
+	if grapple_raycast_hit and Input.is_action_just_pressed("grappling"):
+		grapple_hook_position = camera_cast.get_collision_point()
+		is_grappling = true
+	if Input.is_action_just_released("grappling"):
+		is_grappling = false
+	if is_grappling:
+		var grapple_direction = (grapple_hook_position - global_transform.origin).normalized()
+		var grapple_target_speed = grapple_direction * Grapple_Force
+		var grapple_dif = (grapple_target_speed - velocity)
+		velocity += grapple_dif * delta
+		current_gravity = 0
+	if WalkState.SLIDE == current_walk_state:
+		if current_slide_time > 0:
+			if floor_angle < SLOPE_SLIDE_THRESHOLD || velocity.y > 0:
+				current_slide_time -= delta
+				current_slide_time = clamp(current_slide_time, 0, SLIDE_TIME_MAX)
+			
+		else:
+			current_walk_state = WalkState.CROUCH
+			_UpdateCollider()
 	
-func shoot(Point: Vector3):
-	var Direction_Bullet = (Point - Bullet_Spawn_Point.get_global_transform().origin.normalized())
-	var Bullet = Bullet_To_Spawn.instantiate()
+	if current_sprint_cd > 0:
+		current_sprint_cd -= delta
+ 
+	#calc target speed based on current input
+	var target_speed : Vector3 = direction * current_max_speed
+ 
+	var current_acc_rate : Vector3 = Vector3.ZERO
+	if input_dir:
+		current_acc_rate = Vector3(current_lerp_acc,
+				0,
+				current_lerp_acc)
+	else:
+		current_acc_rate = Vector3(current_lerp_dec,
+			0,
+			current_lerp_dec)
+	
+	
+	#lerp the target speed for smoother change
+	#if the movement is in the same direction make the target closer to the current velocity
+	#otherwise, since direction shift is required make the target closer to actual target
+	#if player is faster than top speed don't slow down on X and Z axis
+	if (target_speed.x != 0 &&
+		abs(velocity.x) >= abs(target_speed.x) &&
+		sign(velocity.x) == sign(target_speed.x)):
+			
+		target_speed.x = lerp(velocity.x, target_speed.x, 1-TARGET_LERP)
+	else:
+		target_speed.x = lerp(velocity.x, target_speed.x, TARGET_LERP)
+		
+	if (target_speed.z != 0 &&
+		abs(velocity.z) >= abs(target_speed.z) &&
+		sign(velocity.z) == sign(target_speed.z)):
+ 
+		target_speed.z = lerp(velocity.z, target_speed.z, 1-TARGET_LERP)
+	else:
+		target_speed.z = lerp(velocity.z, target_speed.z, TARGET_LERP)
+	
+	# Handle Jump.
+	if Input.is_action_just_released("jump") and velocity.y > 0:
+		current_jump_cd = 0
+		velocity.y = velocity.y / 2.0
+	elif current_coyote_time > 0 && (
+		Input.is_action_just_pressed("jump") || current_jump_cd > 0):
+		current_jump_cd = JUMP_CD_MAX
+		velocity.y = JUMP_VELOCITY
+		if Input.is_action_pressed("sprint"): current_walk_state = WalkState.SPRINT
+		else: current_walk_state = WalkState.NORMAL
+		_UpdateCollider()
+		
+	if abs(velocity.y) < JUMP_HANG_TIME_THRESHOLD && !is_on_floor():
+		#make the gravity weaker around apex of jump
+		current_gravity = gravity_hang_time
+		
+		#increase responsiveness
+		target_speed *= JUMP_HANG_TIME_SPEED_MULT
+		current_acc_rate *= JUMP_HANG_TIME_ACC_MULT
+	else:
+		#if falling make gravity stronger
+		if velocity.y < 0:
+			current_gravity = gravity_falling
+		else:
+			current_gravity = gravity_default
+	
+	# Add the gravity.
+	if not is_on_floor():
+		current_coyote_time -= delta
+		if current_coyote_time < 0: current_coyote_time = 0
+		velocity.y -= current_gravity * delta
+	else:
+		current_coyote_time = COYOTE_TIME_MAX
+ 
+	
+	#calculate dif between max and current speed
+	#ignore y axis
+	var speed_difference : Vector3 = target_speed - velocity
+	speed_difference.y = 0
+ 
+	#final force that will be applied to character
+	var movement = speed_difference * current_acc_rate
+ 
+	if is_on_floor() && floor_angle > SLOPE_SLIDE_THRESHOLD:
+		var plane = Plane(get_floor_normal())
+		movement = plane.project(movement)
+		current_slide_vector = plane.project(current_slide_vector)
+ 
+	if WalkState.SLIDE == current_walk_state:
+		velocity = velocity + (movement) * delta * SLIDE_DAMPEN_RATE
+		velocity = velocity + current_slide_vector * delta * (current_slide_time) * (-(current_slide_vector.y) + .01)
+	else:
+		velocity = velocity + (movement) * delta
+ 
+	if velocity.y < -FALL_SPEED_MAX:
+		velocity.y = -FALL_SPEED_MAX
+		
+	current_jump_cd -= delta
+	if current_jump_cd < 0: current_jump_cd = 0
+	
+	_UpdateCameraPosition(delta, inverse_lerp(0, abs(SPRINT_SPEED), velocity.length()))
+	move_and_slide()
+
+func _UpdateCameraPosition(delta, speed_t):
+	var t = CAMERA_LERP * delta
+ 
+	if WalkState.SLIDE == current_walk_state:
+		camera_3d.rotation.z = lerp(camera_3d.rotation.z, deg_to_rad(15.0), t)
+	else:
+		camera_3d.rotation.z = lerp(camera_3d.rotation.z, 0.0, t)
+		
+		
+	var tmp = lerp(CAMERA_FOV_NORMAL, CAMERA_FOV_MAX_SPEED, speed_t)
+	camera_3d.fov = lerp(camera_3d.fov, min(tmp, CAMERA_FOV_MAX_SPEED), t)
+	camera_pivot.position.y = lerp(camera_pivot.position.y, current_camera_height, t)
+
+func _process(delta):
+	input_dir = Input.get_vector("left", "right", "forward", "back")
+ 
+	direction = transform.basis * Vector3(input_dir.x, 0, input_dir.y).normalized()
+ 
+	if WalkState.SLIDE != current_walk_state:
+		if Input.is_action_pressed("prone") && is_on_floor():
+			if current_walk_state != WalkState.PRONE:
+				current_walk_state = WalkState.PRONE
+				_UpdateCollider()
+		elif Input.is_action_pressed("crouch") and !height_raycast.is_colliding() && is_on_floor():
+			if current_walk_state != WalkState.CROUCH:
+				if current_sprint_cd > 0:
+					current_walk_state = WalkState.SLIDE
+					current_slide_time = SLIDE_TIME_MAX
+					current_slide_vector = abs(velocity) * direction
+					current_slide_vector.y = 0
+					_UpdateCollider()
+				else:
+					current_walk_state = WalkState.CROUCH
+					_UpdateCollider()
+		elif !height_raycast.is_colliding():
+			if current_walk_state == WalkState.PRONE:
+				current_walk_state = WalkState.CROUCH
+				_UpdateCollider()
+			elif Input.is_action_pressed("sprint"):
+				current_sprint_cd = SPRINT_CD_MAX
+				if current_walk_state != WalkState.SPRINT:
+					current_walk_state = WalkState.SPRINT
+					_UpdateCollider()
+			elif current_walk_state != WalkState.NORMAL:
+				current_walk_state = WalkState.NORMAL
+				_UpdateCollider()
+				
+	floor_angle = get_floor_angle()
+ 
+func _UpdateCollider():
+	match current_walk_state:
+		WalkState.NORMAL:
+			collider.shape.height = COLLIDER_HEIGHT_NORMAL
+			collider.position.y = COLLIDER_HEIGHT_NORMAL / 2.0
+			height_raycast.target_position.y = COLLIDER_HEIGHT_NORMAL
+			current_camera_height = CAMERA_HEIGHT_NORMAL
+			current_max_speed = WALK_SPEED
+			current_lerp_acc = WALK_LERP_ACC
+			current_lerp_dec = WALK_LERP_DEC
+		WalkState.CROUCH:   
+			collider.shape.height = COLLIDER_HEIGHT_CROUCH
+			collider.position.y = COLLIDER_HEIGHT_CROUCH / 2.0
+			height_raycast.target_position.y = COLLIDER_HEIGHT_NORMAL
+			current_camera_height = CAMERA_HEIGHT_CROUCH
+			current_max_speed = CROUCH_SPEED
+			current_lerp_acc = CROUCH_LERP_ACC
+			current_lerp_dec = CROUCH_LERP_DEC
+		WalkState.SLIDE:    
+			collider.shape.height = COLLIDER_HEIGHT_CROUCH
+			collider.position.y = COLLIDER_HEIGHT_CROUCH / 2.0
+			height_raycast.target_position.y = COLLIDER_HEIGHT_NORMAL
+			current_camera_height = CAMERA_HEIGHT_CROUCH
+			current_max_speed = WALK_SPEED
+			current_lerp_acc = CROUCH_LERP_ACC
+			current_lerp_dec = CROUCH_LERP_DEC
+		WalkState.PRONE:    
+			collider.shape.height = COLLIDER_HEIGHT_PRONE
+			collider.position.y = COLLIDER_HEIGHT_PRONE / 2.0
+			height_raycast.target_position.y = COLLIDER_HEIGHT_CROUCH
+			current_camera_height = CAMERA_HEIGHT_PRONE
+			current_max_speed = PRONE_SPEED
+			current_lerp_acc = PRONE_LERP_ACC
+			current_lerp_dec = PRONE_LERP_DEC
+		WalkState.SPRINT:   
+			collider.shape.height = COLLIDER_HEIGHT_NORMAL
+			collider.position.y = COLLIDER_HEIGHT_NORMAL / 2.0
+			height_raycast.target_position.y = COLLIDER_HEIGHT_NORMAL
+			current_camera_height = CAMERA_HEIGHT_NORMAL
+			current_max_speed = SPRINT_SPEED
+			current_lerp_acc = SPRINT_LERP_ACC
+			current_lerp_dec = SPRINT_LERP_DEC
