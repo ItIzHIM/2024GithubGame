@@ -8,6 +8,17 @@ enum WalkState{
 	SLIDE
 }
 
+
+var player = null
+var bullet = load("res://bullet.tscn")
+var enemy = load("res://Zombie.tscn")
+
+
+@onready var spawn_point = $"../SpawnPoint"
+@onready var gun_barrel = $CameraPivot/Camera3D/Gun/gun_raycast2
+var instance
+var instance_enemy
+
 @export var Grapple_Force = 40
 var grapple_hook_position : Vector3 = Vector3.ZERO
 
@@ -110,6 +121,8 @@ func _input(event):
 		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _physics_process(delta):
+	
+	#grapple crap
 	if Input.is_action_pressed("escape"):
 		get_tree().quit()
 	player_position = global_transform.origin
@@ -233,6 +246,14 @@ func _physics_process(delta):
 	if current_jump_cd < 0: current_jump_cd = 0
 	
 	_UpdateCameraPosition(delta, inverse_lerp(0, abs(SPRINT_SPEED), velocity.length()))
+	
+	#bullet crap
+	if Input.is_action_just_pressed("shoot"):
+		instance = bullet.instantiate()
+		instance.position = gun_barrel.global_position
+		instance.transform.basis = gun_barrel.global_transform.basis 
+		get_parent().add_child(instance)
+	
 	move_and_slide()
 
 func _UpdateCameraPosition(delta, speed_t):
@@ -326,3 +347,16 @@ func _UpdateCollider():
 			current_max_speed = SPRINT_SPEED
 			current_lerp_acc = SPRINT_LERP_ACC
 			current_lerp_dec = SPRINT_LERP_DEC
+
+
+
+
+
+func _on_timer_timeout():
+	var zombie = enemy.instantiate()
+	
+	var zombie_spawn_location = spawn_point.global_position
+	
+	zombie.position = zombie_spawn_location
+	
+	get_parent().add_child(zombie)

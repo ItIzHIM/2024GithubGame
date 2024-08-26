@@ -24,6 +24,7 @@ offset_left = 20.0
 offset_top = 27.0
 offset_right = 33.0
 offset_bottom = 55.0
+use_top_left = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
 layout_mode = 2
