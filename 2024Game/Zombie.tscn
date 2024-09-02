@@ -1,13 +1,20 @@
-[gd_scene load_steps=8 format=3 uid="uid://68xlo1fwldng"]
+[gd_scene load_steps=12 format=3 uid="uid://68xlo1fwldng"]
 
 [sub_resource type="GDScript" id="GDScript_vplbl"]
 script/source = "extends CharacterBody3D
 
+var detected = false
+var bul_instance
 var player = null
 var health = 2
+@onready var eye_gun = $GiantEye
+
+@onready var timer = $Timer
+var enemy_bullet = load(\"res://enemy_bullet.tscn\")
 
 const SPEED = 6
 
+var look_at_position = Vector3(0, 0, 0)
 @onready var particles = $GPUParticles3D
 @export var player_path : NodePath
 @onready var nav_agent = $NavigationAgent3D
@@ -19,12 +26,15 @@ func _ready():
 		push_error(\"Player path is not set.\")
 
 func _process(delta):
-	if player:
-		nav_agent.set_target_position(player.global_transform.origin)
-		var next_nav_point = nav_agent.get_next_path_position()
-		var direction = (next_nav_point - global_transform.origin).normalized()
-		velocity = direction * SPEED
-		move_and_slide()
+	if detected:
+		look_at_position = Vector3(player.global_transform.origin.x, player.global_transform.origin.y + 1, player.global_transform.origin.z)
+		if player:
+			nav_agent.set_target_position(player.global_transform.origin)
+			var next_nav_point = nav_agent.get_next_path_position()
+			var direction = (next_nav_point - global_transform.origin).normalized()
+			velocity = direction * SPEED
+			look_at(look_at_position, Vector3.UP)
+			move_and_slide()
 
 func death():
 	$MeshInstance3D.visible = false
@@ -36,6 +46,22 @@ func _on_area_3d_area_entered(area):
 	health -= 1
 	if health == 0:
 		death()
+
+
+func _on_timer_timeout():
+	if detected:
+		bul_instance = enemy_bullet.instantiate()
+		bul_instance.position = $MeshInstance3D2.global_position
+		bul_instance.transform.basis = eye_gun.global_transform.basis 
+		get_parent().add_child(bul_instance)
+
+
+func _on_attack_zone_area_entered(area):
+	detected = true
+
+
+func _on_attack_zone_area_exited(area):
+	detected = false
 "
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_kih5y"]
@@ -55,11 +81,23 @@ emission_energy_multiplier = 3.03
 material = SubResource("StandardMaterial3D_vm730")
 size = Vector3(0.1, 0.1, 0.1)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fpvmc"]
+albedo_color = Color(0.241156, 0.241156, 0.241156, 1)
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_uctgb"]
+material = SubResource("StandardMaterial3D_fpvmc")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gcaud"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tp7mk"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qml78"]
+albedo_color = Color(0.516924, 0.00389208, 0.0101991, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_ryqnk"]
+material = SubResource("StandardMaterial3D_qml78")
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_oqr1n"]
 
 [node name="Zombie" type="CharacterBody3D"]
 collision_layer = 5
@@ -93,4 +131,26 @@ collision_mask = 16
 transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1.2, 0, 0, 0)
 shape = SubResource("CapsuleShape3D_tp7mk")
 
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.622123, 0, 0.326992, -0.649965)
+mesh = SubResource("PrismMesh_ryqnk")
+
+[node name="Timer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 2.0
+autostart = true
+
+[node name="GiantEye" type="RayCast3D" parent="."]
+
+[node name="AttackZone" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 32
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AttackZone"]
+transform = Transform3D(18, 0, 0, 0, 18, 0, 0, 0, 18, 0, 0, 0)
+shape = SubResource("SphereShape3D_oqr1n")
+
 [connection signal="area_entered" from="DamageCollisionArea" to="." method="_on_area_3d_area_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="area_entered" from="AttackZone" to="." method="_on_attack_zone_area_entered"]
+[connection signal="area_exited" from="AttackZone" to="." method="_on_attack_zone_area_exited"]

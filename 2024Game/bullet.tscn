@@ -47,7 +47,7 @@ transform = Transform3D(0.993389, 0, 0, 0, 0.993389, 0, 0, 0, 0.993389, 0, 0, 0)
 script = ExtResource("1_2r7ls")
 
 [node name="bullet" type="MeshInstance3D" parent="."]
-transform = Transform3D(-1.30095e-08, -0.0343779, 5.92228e-10, 0, -1.50271e-09, -0.0135486, 0.297622, -1.50271e-09, 2.58871e-17, 0, 0, 0)
+transform = Transform3D(-2.6017e-08, -0.129999, 5.38974e-09, 0, -5.68243e-09, -0.123303, 0.5952, -5.68243e-09, 2.35593e-16, -0.00611059, 0, 0)
 layers = 17
 mesh = SubResource("BoxMesh_xhfoo")
 
@@ -71,7 +71,7 @@ autostart = true
 
 [node name="BulletDamageArea" type="Area3D" parent="."]
 collision_layer = 16
-collision_mask = 16
+collision_mask = 0
 
 [node name="BulletCollision" type="CollisionShape3D" parent="BulletDamageArea"]
 transform = Transform3D(0.2, 0, 0, 0, -8.74228e-09, -0.2, 0, 0.2, -8.74228e-09, 0.00298903, -0.00350396, 0.00666699)

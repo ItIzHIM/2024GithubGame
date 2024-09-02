@@ -8,7 +8,8 @@ enum WalkState{
 	SLIDE
 }
 
-
+var dead = false
+@export var player_health = 5
 var player = null
 var bullet = load("res://bullet.tscn")
 var enemy = load("res://Zombie.tscn")
@@ -51,8 +52,8 @@ const PRONE_SPEED = 1.5
 const PRONE_LERP_ACC = 12
 const PRONE_LERP_DEC = 22
  
-const SLIDE_SPEED = 30
-const SLIDE_TIME_MAX = .7
+const SLIDE_SPEED = 20
+const SLIDE_TIME_MAX = 0.7
 const SLIDE_DAMPEN_RATE = .05
 const SLIDE_FLAT_DAMPEN_RATE = .001
 const SLOPE_SLIDE_THRESHOLD = .1
@@ -121,10 +122,9 @@ func _input(event):
 		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _physics_process(delta):
-	
 	#grapple crap
 	if Input.is_action_pressed("escape"):
-		get_tree().quit()
+		get_tree().change_scene_to_file("res://menu.tscn")
 	player_position = global_transform.origin
 	grapple_raycast_hit = camera_cast.get_collision_point()
 	if grapple_raycast_hit and Input.is_action_just_pressed("grappling"):
@@ -132,7 +132,7 @@ func _physics_process(delta):
 		is_grappling = true
 	if Input.is_action_just_released("grappling"):
 		is_grappling = false
-	if is_grappling:
+	if is_grappling and WalkState.SLIDE != current_walk_state:
 		var grapple_direction = (grapple_hook_position - global_transform.origin).normalized()
 		var grapple_target_speed = grapple_direction * Grapple_Force
 		var grapple_dif = (grapple_target_speed - velocity)
@@ -233,12 +233,26 @@ func _physics_process(delta):
 		movement = plane.project(movement)
 		current_slide_vector = plane.project(current_slide_vector)
  
-	if WalkState.SLIDE == current_walk_state:
-		velocity = velocity + (movement) * delta * SLIDE_DAMPEN_RATE
-		velocity = velocity + current_slide_vector * delta * (current_slide_time) * (-(current_slide_vector.y) + .01)
+	if WalkState.SLIDE == current_walk_state and is_on_floor():
+		velocity.y = -FALL_SPEED_MAX
+		if velocity.x < 100 or velocity.x > -100 or velocity.z < 100 or velocity.z > -100:
+			velocity = velocity + (movement) * delta * SLIDE_DAMPEN_RATE
+			velocity = velocity + current_slide_vector * delta * (current_slide_time) * (-(current_slide_vector.y) + .01)
+		if velocity.x > 120:
+			velocity.x = 120
+		if velocity.x < -120:
+			velocity.x = -120
+		if velocity.z < -120:
+			
+			
+			
+			
+			velocity.z = -120
+		if velocity.z > 120:
+			velocity.z = 120
 	else:
 		velocity = velocity + (movement) * delta
- 
+		
 	if velocity.y < -FALL_SPEED_MAX:
 		velocity.y = -FALL_SPEED_MAX
 		
@@ -352,11 +366,14 @@ func _UpdateCollider():
 
 
 
-func _on_timer_timeout():
-	var zombie = enemy.instantiate()
-	
-	var zombie_spawn_location = spawn_point.global_position
-	
-	zombie.position = zombie_spawn_location
-	
-	get_parent().add_child(zombie)
+func _on_damage_area_area_entered(area):
+	player_health -= 1
+	if player_health >= 0:
+		dead = true
+		player_death()
+
+func player_death():
+	if dead == true:
+		$GPUParticles3D.emitting = true
+		await get_tree().create_timer(3.0).timeout
+		print("off")

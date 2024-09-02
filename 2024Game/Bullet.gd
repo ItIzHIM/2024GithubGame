@@ -1,6 +1,6 @@
 extends Node3D
 
-const SPEED = 80
+const SPEED = 50
 
 
 @onready var mesh = $bullet
@@ -14,7 +14,6 @@ func _process(delta):
 		particles.emitting = true
 		await get_tree().create_timer(3.0).timeout
 		queue_free()
-	
 
 
 
