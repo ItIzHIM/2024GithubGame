@@ -1,34 +1,218 @@
-[gd_scene load_steps=2 format=3 uid="uid://d4bggmxfv2bc8"]
+[gd_scene load_steps=10 format=3 uid="uid://d4bggmxfv2bc8"]
 
 [ext_resource type="Script" path="res://Menu.gd" id="1_wbxu3"]
+[ext_resource type="Texture2D" uid="uid://cq1mjmw02vn2h" path="res://summer8/1.png" id="2_2oh8x"]
+[ext_resource type="Script" path="res://button_mover.gd" id="2_e5btq"]
+[ext_resource type="Texture2D" uid="uid://dya2lki8nmhv7" path="res://summer8/2.png" id="3_mpjcd"]
+[ext_resource type="Texture2D" uid="uid://uric1jmwv26m" path="res://summer8/3.png" id="4_6ptsf"]
+[ext_resource type="Texture2D" uid="uid://dybc42vuogoi3" path="res://summer8/4.png" id="5_fcipq"]
+[ext_resource type="Script" path="res://BackgroundGuy.gd" id="6_arb3a"]
+[ext_resource type="AudioStream" uid="uid://dxyacxth2m0km" path="res://Audio/loop-menu-preview-109594 (1).mp3" id="8_8hgjx"]
+[ext_resource type="AudioStream" uid="uid://c2agxtoo3emjp" path="res://Audio/toy-button-105724.mp3" id="9_2txrc"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_wbxu3")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="button_mover" type="CharacterBody2D" parent="."]
+script = ExtResource("2_e5btq")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="button_mover"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -35.0
+offset_top = -50.5
+offset_right = 35.0
+offset_bottom = 50.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="button_mover/MarginContainer"]
 layout_mode = 2
+alignment = 1
 
-[node name="Play" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Play" type="Button" parent="button_mover/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Play"
 
-[node name="Options" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Options" type="Button" parent="button_mover/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Options
 "
 
-[node name="Quit" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="Quit" type="Button" parent="button_mover/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Quit
 "
 
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Options" to="." method="_on_options_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]
+[node name="Node2D" type="Node2D" parent="."]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="Node2D"]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.1, 0.1)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer"]
+scale = Vector2(2, 2)
+texture = ExtResource("2_2oh8x")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.3, 0.3)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer2"]
+scale = Vector2(2, 2)
+texture = ExtResource("3_mpjcd")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.5, 0.5)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer3"]
+scale = Vector2(2, 2)
+texture = ExtResource("4_6ptsf")
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.6, 0.6)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer4"]
+scale = Vector2(2, 2)
+texture = ExtResource("5_fcipq")
+
+[node name="ParallaxLayer5" type="ParallaxLayer" parent="Node2D/ParallaxBackground"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.9, 0.9)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground/ParallaxLayer5"]
+scale = Vector2(2, 2)
+
+[node name="ParallaxBackground2" type="ParallaxBackground" parent="Node2D"]
+offset = Vector2(1152, 0)
+transform = Transform2D(1, 0, 0, 1, 1152, 0)
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Node2D/ParallaxBackground2"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.1, 0.1)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground2/ParallaxLayer"]
+scale = Vector2(2, 2)
+texture = ExtResource("2_2oh8x")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="Node2D/ParallaxBackground2"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.3, 0.3)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground2/ParallaxLayer2"]
+scale = Vector2(2, 2)
+texture = ExtResource("3_mpjcd")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="Node2D/ParallaxBackground2"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.5, 0.5)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground2/ParallaxLayer3"]
+scale = Vector2(2, 2)
+texture = ExtResource("4_6ptsf")
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="Node2D/ParallaxBackground2"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.6, 0.6)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground2/ParallaxLayer4"]
+scale = Vector2(2, 2)
+texture = ExtResource("5_fcipq")
+
+[node name="ParallaxLayer5" type="ParallaxLayer" parent="Node2D/ParallaxBackground2"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.9, 0.9)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground2/ParallaxLayer5"]
+scale = Vector2(2, 2)
+
+[node name="ParallaxBackground3" type="ParallaxBackground" parent="Node2D"]
+offset = Vector2(-1152, 0)
+transform = Transform2D(1, 0, 0, 1, -1152, 0)
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="Node2D/ParallaxBackground3"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.1, 0.1)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground3/ParallaxLayer"]
+scale = Vector2(2, 2)
+texture = ExtResource("2_2oh8x")
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="Node2D/ParallaxBackground3"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.3, 0.3)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground3/ParallaxLayer2"]
+scale = Vector2(2, 2)
+texture = ExtResource("3_mpjcd")
+
+[node name="ParallaxLayer3" type="ParallaxLayer" parent="Node2D/ParallaxBackground3"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.5, 0.5)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground3/ParallaxLayer3"]
+scale = Vector2(2, 2)
+texture = ExtResource("4_6ptsf")
+
+[node name="ParallaxLayer4" type="ParallaxLayer" parent="Node2D/ParallaxBackground3"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.6, 0.6)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground3/ParallaxLayer4"]
+scale = Vector2(2, 2)
+texture = ExtResource("5_fcipq")
+
+[node name="ParallaxLayer5" type="ParallaxLayer" parent="Node2D/ParallaxBackground3"]
+position = Vector2(580, 323)
+motion_scale = Vector2(0.9, 0.9)
+motion_mirroring = Vector2(1152, 0)
+
+[node name="Sprite2D" type="Sprite2D" parent="Node2D/ParallaxBackground3/ParallaxLayer5"]
+scale = Vector2(2, 2)
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="Node2D"]
+position = Vector2(289, 3)
+script = ExtResource("6_arb3a")
+
+[node name="Camera2D" type="Camera2D" parent="Node2D/CharacterBody2D"]
+position = Vector2(-284, -7)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_8hgjx")
+autoplay = true
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_2txrc")
+
+[connection signal="pressed" from="button_mover/MarginContainer/VBoxContainer/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="button_mover/MarginContainer/VBoxContainer/Options" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="button_mover/MarginContainer/VBoxContainer/Quit" to="." method="_on_quit_pressed"]

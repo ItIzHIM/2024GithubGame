@@ -11,8 +11,8 @@ func _ready():
 	
 func _process(delta):
 	var velocity_player = player.velocity
-		
-	property.text = str(velocity_player)
+	var health = player.player_health
+	property.text = str(velocity_player) + str("   ", "health = ", health)
 func _add_debug_proprty(title : String,value):
 	property = Label.new()
 	property_container.add_child(property)

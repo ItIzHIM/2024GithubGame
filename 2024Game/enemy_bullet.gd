@@ -2,7 +2,6 @@ extends Node3D
 
 const SPEED = 20
 
-
 @onready var mesh = $bullet
 
 func _process(delta):

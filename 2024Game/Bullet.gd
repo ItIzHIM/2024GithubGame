@@ -1,6 +1,6 @@
 extends Node3D
 
-const SPEED = 50
+const SPEED = 200
 
 
 @onready var mesh = $bullet
@@ -19,3 +19,5 @@ func _process(delta):
 
 func _on_timer_timeout():
 	queue_free()
+
+

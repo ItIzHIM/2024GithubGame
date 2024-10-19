@@ -1,8 +1,11 @@
-[gd_scene load_steps=12 format=3 uid="uid://68xlo1fwldng"]
+[gd_scene load_steps=13 format=3 uid="uid://68xlo1fwldng"]
+
+[ext_resource type="AudioStream" uid="uid://b4mslqhq8qb83" path="res://Audio/laser-shot-ingame-230500.mp3" id="1_4tj6a"]
 
 [sub_resource type="GDScript" id="GDScript_vplbl"]
 script/source = "extends CharacterBody3D
 
+var dead = false
 var detected = false
 var bul_instance
 var player = null
@@ -37,6 +40,9 @@ func _process(delta):
 			move_and_slide()
 
 func death():
+	dead = true
+	detected = false
+	$MeshInstance3D2.visible = false
 	$MeshInstance3D.visible = false
 	particles.emitting = true
 	await get_tree().create_timer(3.0).timeout
@@ -50,6 +56,7 @@ func _on_area_3d_area_entered(area):
 
 func _on_timer_timeout():
 	if detected:
+		$AudioStreamPlayer3D.play()
 		bul_instance = enemy_bullet.instantiate()
 		bul_instance.position = $MeshInstance3D2.global_position
 		bul_instance.transform.basis = eye_gun.global_transform.basis 
@@ -57,7 +64,8 @@ func _on_timer_timeout():
 
 
 func _on_attack_zone_area_entered(area):
-	detected = true
+	if dead == false:
+		detected = true
 
 
 func _on_attack_zone_area_exited(area):
@@ -137,7 +145,7 @@ mesh = SubResource("PrismMesh_ryqnk")
 
 [node name="Timer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 2.0
+wait_time = 0.5
 autostart = true
 
 [node name="GiantEye" type="RayCast3D" parent="."]
@@ -149,6 +157,11 @@ collision_mask = 32
 [node name="CollisionShape3D" type="CollisionShape3D" parent="AttackZone"]
 transform = Transform3D(18, 0, 0, 0, 18, 0, 0, 0, 18, 0, 0, 0)
 shape = SubResource("SphereShape3D_oqr1n")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.363718, -0.792772)
+stream = ExtResource("1_4tj6a")
+volume_db = -12.308
 
 [connection signal="area_entered" from="DamageCollisionArea" to="." method="_on_area_3d_area_entered"]
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

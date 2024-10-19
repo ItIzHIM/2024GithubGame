@@ -8,13 +8,17 @@ enum WalkState{
 	SLIDE
 }
 
+var shootable = true
+@onready var cursor = $CameraPivot/Camera3D/Cursor
+@onready var dead_text = $CameraPivot/Camera3D/Dead_Text
+@onready var gun = $CameraPivot/Camera3D/Gun
 var dead = false
 @export var player_health = 5
 var player = null
 var bullet = load("res://bullet.tscn")
 var enemy = load("res://Zombie.tscn")
 
-
+@onready var gun_model = $CameraPivot/Camera3D/Gun
 @onready var spawn_point = $"../SpawnPoint"
 @onready var gun_barrel = $CameraPivot/Camera3D/Gun/gun_raycast2
 var instance
@@ -52,10 +56,10 @@ const PRONE_SPEED = 1.5
 const PRONE_LERP_ACC = 12
 const PRONE_LERP_DEC = 22
  
-const SLIDE_SPEED = 20
+const SLIDE_SPEED = 10
 const SLIDE_TIME_MAX = 0.7
-const SLIDE_DAMPEN_RATE = .05
-const SLIDE_FLAT_DAMPEN_RATE = .001
+const SLIDE_DAMPEN_RATE = .09
+const SLIDE_FLAT_DAMPEN_RATE = .002
 const SLOPE_SLIDE_THRESHOLD = .1
 var current_slide_time = 0
 var current_slide_vector : Vector3 = Vector3.ZERO
@@ -113,40 +117,52 @@ const CAMERA_FOV_MAX_SPEED = 100.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	dead_text.visible = false
 	_UpdateCollider()
 
 func _input(event):
-	if event is InputEventMouseMotion:
+	if event is InputEventMouseMotion and dead == false:
 		rotate_y(deg_to_rad(camera_sensitivity * -event.relative.x))
 		camera_pivot.rotate_x(deg_to_rad(camera_sensitivity * -event.relative.y))
 		camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
 func _physics_process(delta):
-	#grapple crap
-	if Input.is_action_pressed("escape"):
-		get_tree().change_scene_to_file("res://menu.tscn")
-	player_position = global_transform.origin
-	grapple_raycast_hit = camera_cast.get_collision_point()
-	if grapple_raycast_hit and Input.is_action_just_pressed("grappling"):
-		grapple_hook_position = camera_cast.get_collision_point()
-		is_grappling = true
-	if Input.is_action_just_released("grappling"):
-		is_grappling = false
-	if is_grappling and WalkState.SLIDE != current_walk_state:
-		var grapple_direction = (grapple_hook_position - global_transform.origin).normalized()
-		var grapple_target_speed = grapple_direction * Grapple_Force
-		var grapple_dif = (grapple_target_speed - velocity)
-		velocity += grapple_dif * delta
-		current_gravity = 0
-	if WalkState.SLIDE == current_walk_state:
-		if current_slide_time > 0:
-			if floor_angle < SLOPE_SLIDE_THRESHOLD || velocity.y > 0:
-				current_slide_time -= delta
-				current_slide_time = clamp(current_slide_time, 0, SLIDE_TIME_MAX)
-			
-		else:
-			current_walk_state = WalkState.CROUCH
-			_UpdateCollider()
+	if dead == true:
+		gun.hide()
+		camera_3d.rotation.y = lerp(camera_3d.rotation.y, deg_to_rad(90), 0.02)
+		camera_3d.rotation.x = lerp(camera_3d.rotation.x, deg_to_rad(90), 0.02)
+		if camera_pivot.global_transform.origin.y <= global_transform.origin.y + 30:
+			camera_pivot.global_transform.origin.y += 0.3
+
+	if dead == false:
+		#grapple crap
+		if Input.is_action_pressed("escape"):
+			Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+			get_tree().change_scene_to_file("res://menu.tscn")
+		player_position = global_transform.origin
+		grapple_raycast_hit = camera_cast.get_collision_point()
+		if grapple_raycast_hit and Input.is_action_just_pressed("grappling"):
+			$"../GraplleStretch".play()
+			grapple_hook_position = camera_cast.get_collision_point()
+			is_grappling = true
+		if Input.is_action_just_released("grappling"):
+			is_grappling = false
+		if is_grappling and WalkState.SLIDE != current_walk_state and dead == false:
+			var grapple_direction = (grapple_hook_position - global_transform.origin).normalized()
+			var grapple_target_speed = grapple_direction * Grapple_Force
+			var grapple_dif = (grapple_target_speed - velocity)
+			velocity += grapple_dif * delta
+			current_gravity = 0
+		if WalkState.SLIDE == current_walk_state:
+			velocity.y = -30
+			if current_slide_time > 0:
+				if floor_angle < SLOPE_SLIDE_THRESHOLD || velocity.y > 0:
+					current_slide_time -= delta
+					current_slide_time = clamp(current_slide_time, 0, SLIDE_TIME_MAX)
+				
+			else:
+				current_walk_state = WalkState.CROUCH
+				_UpdateCollider()
 	
 	if current_sprint_cd > 0:
 		current_sprint_cd -= delta
@@ -234,8 +250,7 @@ func _physics_process(delta):
 		current_slide_vector = plane.project(current_slide_vector)
  
 	if WalkState.SLIDE == current_walk_state and is_on_floor():
-		velocity.y = -FALL_SPEED_MAX
-		if velocity.x < 100 or velocity.x > -100 or velocity.z < 100 or velocity.z > -100:
+		if velocity.x < 120 or velocity.x > -120 or velocity.z < 120 or velocity.z > -120:
 			velocity = velocity + (movement) * delta * SLIDE_DAMPEN_RATE
 			velocity = velocity + current_slide_vector * delta * (current_slide_time) * (-(current_slide_vector.y) + .01)
 		if velocity.x > 120:
@@ -243,82 +258,92 @@ func _physics_process(delta):
 		if velocity.x < -120:
 			velocity.x = -120
 		if velocity.z < -120:
-			
-			
-			
-			
 			velocity.z = -120
 		if velocity.z > 120:
 			velocity.z = 120
 	else:
 		velocity = velocity + (movement) * delta
-		
-	if velocity.y < -FALL_SPEED_MAX:
-		velocity.y = -FALL_SPEED_MAX
-		
+	
 	current_jump_cd -= delta
 	if current_jump_cd < 0: current_jump_cd = 0
 	
 	_UpdateCameraPosition(delta, inverse_lerp(0, abs(SPRINT_SPEED), velocity.length()))
 	
 	#bullet crap
-	if Input.is_action_just_pressed("shoot"):
+	if Input.is_action_just_pressed("shoot") and shootable == true: 
+		$"../AudioStreamPlayer".play()
+		$CameraPivot/Camera3D/Gun/AnimationPlayer.play("new_animation")
+		shootable = false
 		instance = bullet.instantiate()
 		instance.position = gun_barrel.global_position
 		instance.transform.basis = gun_barrel.global_transform.basis 
 		get_parent().add_child(instance)
+		await get_tree().create_timer(0.5).timeout
+		shootable = true
+		
+	
 	
 	move_and_slide()
 
 func _UpdateCameraPosition(delta, speed_t):
-	var t = CAMERA_LERP * delta
- 
-	if WalkState.SLIDE == current_walk_state:
-		camera_3d.rotation.z = lerp(camera_3d.rotation.z, deg_to_rad(15.0), t)
-	else:
-		camera_3d.rotation.z = lerp(camera_3d.rotation.z, 0.0, t)
-		
-		
-	var tmp = lerp(CAMERA_FOV_NORMAL, CAMERA_FOV_MAX_SPEED, speed_t)
-	camera_3d.fov = lerp(camera_3d.fov, min(tmp, CAMERA_FOV_MAX_SPEED), t)
-	camera_pivot.position.y = lerp(camera_pivot.position.y, current_camera_height, t)
+	if dead == false:
+		var t = CAMERA_LERP * delta
+	 
+		if WalkState.SLIDE == current_walk_state:
+			camera_3d.rotation.z = lerp(camera_3d.rotation.z, deg_to_rad(15.0), t)
+		else:
+			camera_3d.rotation.z = lerp(camera_3d.rotation.z, 0.0, t)
+			
+			
+		var tmp = lerp(CAMERA_FOV_NORMAL, CAMERA_FOV_MAX_SPEED, speed_t)
+		camera_3d.fov = lerp(camera_3d.fov, min(tmp, CAMERA_FOV_MAX_SPEED), t)
+		camera_pivot.position.y = lerp(camera_pivot.position.y, current_camera_height, t)
 
 func _process(delta):
-	input_dir = Input.get_vector("left", "right", "forward", "back")
- 
-	direction = transform.basis * Vector3(input_dir.x, 0, input_dir.y).normalized()
- 
-	if WalkState.SLIDE != current_walk_state:
-		if Input.is_action_pressed("prone") && is_on_floor():
-			if current_walk_state != WalkState.PRONE:
-				current_walk_state = WalkState.PRONE
-				_UpdateCollider()
-		elif Input.is_action_pressed("crouch") and !height_raycast.is_colliding() && is_on_floor():
-			if current_walk_state != WalkState.CROUCH:
-				if current_sprint_cd > 0:
-					current_walk_state = WalkState.SLIDE
-					current_slide_time = SLIDE_TIME_MAX
-					current_slide_vector = abs(velocity) * direction
-					current_slide_vector.y = 0
+	if dead == false:
+		input_dir = Input.get_vector("left", "right", "forward", "back")
+	 
+		direction = transform.basis * Vector3(input_dir.x, 0, input_dir.y).normalized()
+	 
+
+		if WalkState.SLIDE != current_walk_state:
+			if Input.is_action_pressed("prone") && is_on_floor():
+				if current_walk_state != WalkState.PRONE:
+					current_walk_state = WalkState.PRONE
 					_UpdateCollider()
-				else:
+			elif Input.is_action_pressed("crouch") and !height_raycast.is_colliding() && is_on_floor():
+				if current_walk_state != WalkState.CROUCH:
+					if current_sprint_cd > 0:
+						current_walk_state = WalkState.SLIDE
+						current_slide_time = SLIDE_TIME_MAX
+						current_slide_vector = abs(velocity) * direction
+						current_slide_vector.y = 0
+						_UpdateCollider()
+					else:
+						current_walk_state = WalkState.CROUCH
+						_UpdateCollider()
+			elif !height_raycast.is_colliding():
+				if current_walk_state == WalkState.PRONE:
 					current_walk_state = WalkState.CROUCH
 					_UpdateCollider()
-		elif !height_raycast.is_colliding():
-			if current_walk_state == WalkState.PRONE:
-				current_walk_state = WalkState.CROUCH
-				_UpdateCollider()
-			elif Input.is_action_pressed("sprint"):
-				current_sprint_cd = SPRINT_CD_MAX
-				if current_walk_state != WalkState.SPRINT:
-					current_walk_state = WalkState.SPRINT
+				elif Input.is_action_pressed("sprint"):
+					current_sprint_cd = SPRINT_CD_MAX
+					if current_walk_state != WalkState.SPRINT:
+						current_walk_state = WalkState.SPRINT
+						_UpdateCollider()
+				elif current_walk_state != WalkState.NORMAL:
+					current_walk_state = WalkState.NORMAL
 					_UpdateCollider()
-			elif current_walk_state != WalkState.NORMAL:
-				current_walk_state = WalkState.NORMAL
-				_UpdateCollider()
+		else:
+			if !is_on_floor():
+				await get_tree().create_timer(1).timeout
+				if !is_on_floor():
+					current_walk_state += WalkState.SPRINT
 				
-	floor_angle = get_floor_angle()
- 
+				
+		
+		floor_angle = get_floor_angle()
+	 
 func _UpdateCollider():
 	match current_walk_state:
 		WalkState.NORMAL:
@@ -363,17 +388,24 @@ func _UpdateCollider():
 			current_lerp_dec = SPRINT_LERP_DEC
 
 
-
-
-
 func _on_damage_area_area_entered(area):
-	player_health -= 1
-	if player_health >= 0:
-		dead = true
-		player_death()
+	if dead == false:
+		$AudioStreamPlayer.play()
+		player_health -= 1
+		if player_health == 0:
+			dead = true
+			player_death()
 
 func player_death():
-	if dead == true:
-		$GPUParticles3D.emitting = true
-		await get_tree().create_timer(3.0).timeout
-		print("off")
+	$"../BackgroundMusic".stream_paused = true
+	$"../DeadMusic".play()
+	cursor.visible = false
+	velocity.x = 0
+	velocity.z = 0
+	$GPUParticles3D.emitting = true
+	await get_tree().create_timer(1.5).timeout
+	dead_text.visible = true
+	await get_tree().create_timer(3.0).timeout
+	Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED)
+	get_tree().change_scene_to_file("res://menu.tscn")
+

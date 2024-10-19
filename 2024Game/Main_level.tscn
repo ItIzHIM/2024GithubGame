@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://dxwsj0ahy4deo"]
+[gd_scene load_steps=46 format=3 uid="uid://dxwsj0ahy4deo"]
 
 [ext_resource type="Script" path="res://Player.gd" id="1_288ma"]
 [ext_resource type="PackedScene" uid="uid://c04nojflmmndk" path="res://Gun.tscn" id="2_gtiap"]
@@ -6,7 +6,14 @@
 [ext_resource type="PackedScene" uid="uid://68xlo1fwldng" path="res://Zombie.tscn" id="4_6ekt6"]
 [ext_resource type="PackedScene" uid="uid://dfi16d8f2po2v" path="res://rope_generator.tscn" id="4_rnwbn"]
 [ext_resource type="Script" path="res://RopeGenerator.gd" id="5_oq4vi"]
+[ext_resource type="PackedScene" uid="uid://dk0mi6qpdnumo" path="res://dead_text.tscn" id="6_ea5el"]
 [ext_resource type="Script" path="res://DebugPanel.gd" id="7_3xdwp"]
+[ext_resource type="AudioStream" uid="uid://cuyec6tkt6lfw" path="res://Audio/retro-hurt-2-236675.mp3" id="7_sek0f"]
+[ext_resource type="PackedScene" uid="uid://04x3t88wj12n" path="res://spike.tscn" id="8_imbbb"]
+[ext_resource type="AudioStream" uid="uid://cr1celyexh433" path="res://Audio/sniper-rifle-firing-shot-1-39789.mp3" id="10_yrdyo"]
+[ext_resource type="AudioStream" uid="uid://dro7jg4exr3sx" path="res://Audio/fast-on-the-move-loop-196128.mp3" id="12_5c7m0"]
+[ext_resource type="AudioStream" uid="uid://eie75jv6oleb" path="res://Audio/grappling-hook-14680.mp3" id="12_wxuoy"]
+[ext_resource type="AudioStream" uid="uid://cuco5mqywy6mq" path="res://Audio/dead-8bit-41400.mp3" id="13_l7vtl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_k5e2b"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -50,6 +57,27 @@ func _process(delta):
 "
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_k8o07"]
+
+[sub_resource type="Animation" id="Animation_v3k2h"]
+resource_name = "new_animation"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, -0.583278, -0.878748), Vector3(0, -0.583278, -0.237053), Vector3(0, -0.583, -0.879)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_cuirh"]
+_data = {
+"new_animation": SubResource("Animation_v3k2h")
+}
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6p0t0"]
 
@@ -113,7 +141,14 @@ data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_7xape"]
 data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i7mke"]
+albedo_color = Color(0, 0, 0, 1)
+metallic = 0.12
+metallic_specular = 0.71
+roughness = 0.45
+
 [sub_resource type="BoxMesh" id="BoxMesh_htj06"]
+material = SubResource("StandardMaterial3D_i7mke")
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_brp5y"]
 data = PackedVector3Array(-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5)
@@ -143,6 +178,7 @@ script = ExtResource("1_288ma")
 
 [node name="PlayerMesh" type="MeshInstance3D" parent="Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.98576, 0)
+visible = false
 layers = 3
 mesh = SubResource("CapsuleMesh_4mpmb")
 
@@ -157,7 +193,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.56392, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00815725, -0.06558, -0.123408)
 
 [node name="CameraCast" type="RayCast3D" parent="Player/CameraPivot/Camera3D"]
-transform = Transform3D(1, 0, 0, 0, -2.18557e-06, -1, 0, 50, -4.37114e-08, 0, 0, -0.210016)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-06, -1, 0, 100, -4.37114e-08, 0, 0, -0.210016)
 debug_shape_custom_color = Color(0.937255, 0.2, 0.913725, 1)
 debug_shape_thickness = 5
 script = SubResource("GDScript_4ssja")
@@ -169,12 +205,18 @@ mesh = SubResource("CylinderMesh_k8o07")
 skeleton = NodePath("../../..")
 
 [node name="Gun" parent="Player/CameraPivot/Camera3D" instance=ExtResource("2_gtiap")]
-transform = Transform3D(-3.47122e-08, 0, 1, 0.0282408, 0.438999, 1.55448e-09, -0.793621, 0.0156217, -4.36838e-08, 0, -0.583278, -0.878748)
+transform = Transform3D(-3.47122e-08, 0, 1, 0.0282408, 0.438999, 1.55448e-09, -0.793621, 0.0156217, -4.36838e-08, 0, -0.583, -0.879)
 
 [node name="gun_raycast2" type="RayCast3D" parent="Player/CameraPivot/Camera3D/Gun"]
-transform = Transform3D(4.37111e-08, 3.82135e-15, -0.999995, 8.74221e-08, -0.999994, 0, -0.999992, -8.74222e-08, -4.37112e-08, 0.63799, 0.339854, -0.0387849)
+transform = Transform3D(4.3711e-08, 0, -0.999995, 1.50995e-07, -0.999994, -2.23517e-08, -0.999992, -1.50995e-07, -4.37111e-08, 0.653513, 1.12844, -0.0387849)
+debug_shape_custom_color = Color(1, 0.313726, 1, 1)
 
-[node name="Control" parent="Player/CameraPivot/Camera3D" instance=ExtResource("3_8gvm3")]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player/CameraPivot/Camera3D/Gun"]
+libraries = {
+"": SubResource("AnimationLibrary_cuirh")
+}
+
+[node name="Cursor" parent="Player/CameraPivot/Camera3D" instance=ExtResource("3_8gvm3")]
 offset_bottom = 22.0
 player_path = NodePath("../../..")
 
@@ -187,17 +229,20 @@ transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, -1.09288, 2.37128)
 script = ExtResource("5_oq4vi")
 player_loco = NodePath("../../../..")
 
+[node name="Dead_Text" parent="Player/CameraPivot/Camera3D" instance=ExtResource("6_ea5el")]
+
 [node name="HeightRaycast" type="RayCast3D" parent="Player"]
 transform = Transform3D(1.82187, 0, 0, 0, -2.06045, -0.044788, 0, 0.051004, -1.80934, 0, -0.119925, 0)
 debug_shape_custom_color = Color(1, 0, 0, 1)
 debug_shape_thickness = 4
 
 [node name="DamageArea" type="Area3D" parent="Player"]
-collision_layer = 0
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.09139, 0)
+collision_layer = 128
 collision_mask = 128
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player/DamageArea"]
-transform = Transform3D(0.9, 0, 0, 0, 0.9, 0, 0, 0, 0.9, 0, 0, 0)
+transform = Transform3D(0.89802, 0, 0, 0, 0.89802, 0, 0, 0, 0.89802, 0, -0.0852607, 0)
 shape = SubResource("CapsuleShape3D_6p0t0")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="Player"]
@@ -219,6 +264,10 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Player/EnemyDetection"]
 shape = SubResource("SphereShape3D_fa4ee")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Player"]
+stream = ExtResource("7_sek0f")
+volume_db = -13.783
 
 [node name="SpawnPoint" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.04646, -0.144826, -0.154463)
@@ -251,7 +300,7 @@ shape = SubResource("ConcavePolygonShape3D_v07b0")
 autostart = true
 
 [node name="Zombie" parent="." instance=ExtResource("4_6ekt6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.87617, -6.28205, -6.08278)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.1133, -6.28205, -13.923)
 wall_min_slide_angle = 1.39801
 player_path = NodePath("../Player")
 
@@ -397,6 +446,684 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="Control/DebugPanel/MarginContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="Traps" type="Node3D" parent="."]
+
+[node name="trap1" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.40666, -149.925, -447.717)
+
+[node name="Spike" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap1" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap2" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4318, -178.453, -650.221)
+
+[node name="Spike" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap2" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap3" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4318, -190.515, -650.221)
+
+[node name="Spike" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap3" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap4" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4318, -202.918, -650.221)
+
+[node name="Spike" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap4" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap5" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.7226, -222.094, -842.867)
+
+[node name="Spike" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap5" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap6" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.7226, -233.341, -842.867)
+
+[node name="Spike" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap6" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap7" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.367, -245.445, -842.621)
+
+[node name="Spike" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap7" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap8" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.7226, -257.277, -842.867)
+
+[node name="Spike" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap8" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap9" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.29679, -287.022, -984.869)
+
+[node name="Spike" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap9" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="trap10" type="Node3D" parent="Traps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.2324, -287.022, -985.151)
+
+[node name="Spike" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 0.0085907, 5.15576)
+
+[node name="Spike2" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 0.0085907, 5.15576)
+
+[node name="Spike3" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 0.0085907, 5.15576)
+
+[node name="Spike4" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 0.0085907, 5.15576)
+
+[node name="Spike5" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 0.0085907, 5.15576)
+
+[node name="Spike6" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 0.0085907, 5.15576)
+
+[node name="Spike7" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 0.0085907, 5.15576)
+
+[node name="Spike8" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 3.6458, 5.15576)
+
+[node name="Spike9" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 3.6458, 5.15576)
+
+[node name="Spike10" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 3.6458, 5.15576)
+
+[node name="Spike11" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 3.6458, 5.15576)
+
+[node name="Spike12" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 3.6458, 5.15576)
+
+[node name="Spike13" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 3.6458, 5.15576)
+
+[node name="Spike14" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 3.6458, 5.15576)
+
+[node name="Spike15" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 19.1311, 7.78653, 5.15576)
+
+[node name="Spike16" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 30.3417, 7.78653, 5.15576)
+
+[node name="Spike17" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, 6.78643, 7.78653, 5.15576)
+
+[node name="Spike18" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -3.95528, 7.78653, 5.15576)
+
+[node name="Spike19" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -15.5946, 7.78653, 5.15576)
+
+[node name="Spike20" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -27.8519, 7.78653, 5.15576)
+
+[node name="Spike21" parent="Traps/trap10" instance=ExtResource("8_imbbb")]
+transform = Transform3D(-4.37114e-08, 0, -1, -1, -4.37114e-08, 4.37114e-08, -4.37114e-08, 1, 1.91069e-15, -33.2051, 7.78653, 5.15576)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_yrdyo")
+
+[node name="GraplleStretch" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_wxuoy")
+volume_db = 7.518
+pitch_scale = 1.5
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_5c7m0")
+volume_db = -20.048
+autoplay = true
+
+[node name="DeadMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_l7vtl")
 
 [connection signal="area_entered" from="Player/DamageArea" to="Player" method="_on_damage_area_area_entered"]
 [connection signal="timeout" from="Timer" to="Player" method="_on_timer_timeout"]

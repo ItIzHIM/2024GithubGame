@@ -13,7 +13,7 @@ func _physics_process(delta):
 	# Create a new BoxMesh and assign it to the MeshInstance3D node
 	var rope_length = (player.global_transform.origin - player.grapple_hook_position).length()
 	var cube_mesh = BoxMesh.new()
-	cube_mesh.size = Vector3(1, 1, 2 * rope_length)  # Set the size of the cube (width, height, depth)
+	cube_mesh.size = Vector3(0.5, 0.5, 3 * rope_length)  # Set the size of the cube (width, height, depth)
 	mesh = cube_mesh
 	var midpoint = (player.grapple_hook_position + player.global_transform.origin)/2
 	global_transform.origin = midpoint

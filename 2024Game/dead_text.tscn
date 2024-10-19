@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=3 uid="uid://dk0mi6qpdnumo"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_bkgcy"]
+font_size = 100
+font_color = Color(0.580392, 0, 0, 0.878431)
+shadow_size = 14
+shadow_color = Color(0, 0, 0, 1)
+
+[node name="Dead_Text" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 5.0
+offset_right = 1154.0
+offset_bottom = 652.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="CenterContainer/HBoxContainer"]
+layout_mode = 2
+text = "DEATH
+
+"
+label_settings = SubResource("LabelSettings_bkgcy")
